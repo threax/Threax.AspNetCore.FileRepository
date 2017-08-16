@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Threax.AspNetCore.FileRepository
 {
-    public class MagicNumberVerifier : IFileVerifier
+    public class MagicNumberVerifier : IFileTypeVerifier
     {
         private byte[] magicBytes;
         private List<String> extensions;
@@ -30,7 +30,9 @@ namespace Threax.AspNetCore.FileRepository
             this.magicBytes = magicBytes;
         }
 
-        public bool IsValid(Stream fileStream, String fileName = null, String mimeType = null)
+        public string MimeType => this.mimeType;
+
+        public void Validate(Stream fileStream, String fileName = null, String mimeType = null)
         {
             //Extensions
             var extension = Path.GetExtension(fileName).ToLowerInvariant();
@@ -45,13 +47,13 @@ namespace Threax.AspNetCore.FileRepository
             }
             if (!foundMatch)
             {
-                return false;
+                throw new InvalidDataException($"Unsupported extension {extension}");
             }
 
             //Mime type
-            if (!this.mimeType.Equals(mimeType, StringComparison.OrdinalIgnoreCase))
+            if (!this.mimeType.Equals(mimeType, StringComparison.OrdinalIgnoreCase)) //Pretty much redundant with the container FileVerifier, but keeping this anyway.
             {
-                return false;
+                throw new InvalidDataException($"Unsupported mime type {mimeType}");
             }
 
             //Magic bytes
@@ -64,19 +66,17 @@ namespace Threax.AspNetCore.FileRepository
 
                 if (readAmount != magicBytes.Length)
                 {
-                    return false;
+                    throw new InvalidDataException("File not large enough");
                 }
 
                 for (int i = 0; i < magicBytes.Length; ++i)
                 {
                     if (streamBytes[i] != magicBytes[i])
                     {
-                        return false;
+                        throw new InvalidDataException($"File claims to be a {this.mimeType}, but file contents are invalid.");
                     }
                 }
             }
-
-            return true;
         }
     }
 }

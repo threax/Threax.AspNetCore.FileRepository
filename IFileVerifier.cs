@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 
 namespace Threax.AspNetCore.FileRepository
 {
     public interface IFileVerifier
     {
-        bool IsValid(Stream fileStream, String extension, String mimeType);
+        void addTypeVerifier(IFileTypeVerifier verifier);
+        void Validate(Stream fileStream, string fileName, string mimeType);
+    }
+
+    public interface IFileVerifier<InjectT> : IFileVerifier
+    {
+
     }
 }

@@ -36,7 +36,7 @@ namespace Threax.AspNetCore.FileRepository
 
         public Stream OpenFile(String fileName)
         {
-            if (!Directory.Exists(fileName))
+            if (!Directory.Exists(baseDir))
             {
                 throw new FileNotFoundException("Cannot find file", fileName);
             }

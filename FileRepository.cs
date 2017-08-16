@@ -34,6 +34,23 @@ namespace Threax.AspNetCore.FileRepository
             }
         }
 
+        public Stream OpenFile(String fileName)
+        {
+            if (!Directory.Exists(fileName))
+            {
+                throw new FileNotFoundException("Cannot find file", fileName);
+            }
+
+            var path = GetPhysicalPath(fileName);
+
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException("Cannot find file", fileName);
+            }
+
+            return File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        }
+
         public bool Exists(String fileName)
         {
             if (!Directory.Exists(baseDir))

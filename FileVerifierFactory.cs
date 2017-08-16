@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Threax.AspNetCore.FileRepository;
 
-namespace Threax.AspNetCore.FileRepository
+namespace Microsoft.Extensions.DependencyInjection
 {
     /// <summary>
     /// This class produces preconfigured magic number verifiers.

@@ -30,10 +30,7 @@ namespace Threax.AspNetCore.FileRepository
 
             using (var write = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-                using (var read = stream)
-                {
-                    await read.CopyToAsync(write);
-                }
+                await stream.CopyToAsync(write);
             }
         }
 

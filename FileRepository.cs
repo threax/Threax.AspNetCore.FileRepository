@@ -23,7 +23,7 @@ namespace Threax.AspNetCore.FileRepository
 
             if (!Directory.Exists(baseDir))
             {
-                Directory.CreateDirectory(baseDir);
+                throw new InvalidOperationException("File repository directory does not exist.");
             }
 
             var path = GetPhysicalPath(fileName);

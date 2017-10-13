@@ -65,5 +65,55 @@ namespace Microsoft.Extensions.DependencyInjection
             fileVerifier.addTypeVerifier(new MagicNumberVerifier(".ppt", PptMimeType, 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1));
             return fileVerifier;
         }
+
+        /// <summary>
+        /// Add html files to the verifier. Be careful adding html support since that will allow users to add random code
+        /// to your website. This is normally not a good idea.
+        /// </summary>
+        /// <param name="fileVerifier">The file verifier to add support to.</param>
+        /// <returns>The passed in file verifier.</returns>
+        public static IFileVerifier AddHtml(this IFileVerifier fileVerifier)
+        {
+            fileVerifier.addTypeVerifier(new MagicNumberVerifier(new List<String> { ".html", ".htm" }, HtmlMimeType));
+            return fileVerifier;
+        }
+        public static readonly String HtmlMimeType = "text/html";
+
+        public static IFileVerifier AddBitmap(this IFileVerifier fileVerifier)
+        {
+            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".bmp", BitmapMimeType));
+            return fileVerifier;
+        }
+        public static readonly String BitmapMimeType = "image/bmp";
+
+        public static IFileVerifier AddGif(this IFileVerifier fileVerifier)
+        {
+            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".gif", GifMimeType));
+            return fileVerifier;
+        }
+        public static readonly String GifMimeType = "image/gif";
+
+        public static IFileVerifier AddJpeg(this IFileVerifier fileVerifier)
+        {
+            fileVerifier.addTypeVerifier(new MagicNumberVerifier(new List<String> { ".jpg", ".jpeg", ".jpe", ".jfif" }, JpegMimeType));
+            return fileVerifier;
+        }
+        public static readonly String JpegMimeType = "image/jpeg";
+
+        public static IFileVerifier AddPng(this IFileVerifier fileVerifier)
+        {
+            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".png", PngMimeType));
+            return fileVerifier;
+        }
+        public static readonly String PngMimeType = "image/png";
+
+        public static IFileVerifier AddSvgXml(this IFileVerifier fileVerifier)
+        {
+            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".svg", SvgXmlMimeType));
+            return fileVerifier;
+        }
+        public static readonly String SvgXmlMimeType = "image/svg+xml";
+
+        
     }
 }

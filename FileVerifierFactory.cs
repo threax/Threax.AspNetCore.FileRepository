@@ -114,6 +114,13 @@ namespace Microsoft.Extensions.DependencyInjection
         }
         public static readonly String SvgXmlMimeType = "image/svg+xml";
 
-        
+        public static IFileVerifier AddJson(this IFileVerifier fileVerifier)
+        {
+            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".json", JsonMimeType));
+            return fileVerifier;
+        }
+        public static readonly String JsonMimeType = "application/json";
+
+
     }
 }

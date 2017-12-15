@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Threax.AspNetCore.FileRepository", "Threax.AspNetCore.FileRepository\Threax.AspNetCore.FileRepository.csproj", "{60B42DFB-524C-4A53-A707-E98064EEA6A9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Threax.AspNetCore.FileRepository.Tests", "Threax.AspNetCore.FileRepository.Tests\Threax.AspNetCore.FileRepository.Tests.csproj", "{C4BBA224-2BA2-4451-8613-6EF57C6EDED5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{60B42DFB-524C-4A53-A707-E98064EEA6A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60B42DFB-524C-4A53-A707-E98064EEA6A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60B42DFB-524C-4A53-A707-E98064EEA6A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4BBA224-2BA2-4451-8613-6EF57C6EDED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4BBA224-2BA2-4451-8613-6EF57C6EDED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4BBA224-2BA2-4451-8613-6EF57C6EDED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4BBA224-2BA2-4451-8613-6EF57C6EDED5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

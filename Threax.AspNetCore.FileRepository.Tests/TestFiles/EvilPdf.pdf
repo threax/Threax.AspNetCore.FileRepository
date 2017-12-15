@@ -1,0 +1,13 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+
+    <title>A simple html document</title>
+</head>
+
+<body>
+    <p>Hi</p>
+</body>
+</html>

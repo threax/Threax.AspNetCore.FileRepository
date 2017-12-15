@@ -2,10 +2,14 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>True</IncludeSymbols>
     <IncludeSource>True</IncludeSource>
+    <Authors>Andrew Piper</Authors>
+    <PackageLicenseUrl>https://github.com/threax/Threax.AspNetCore.FileRepository/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/threax/Threax.AspNetCore.FileRepository</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/threax/Threax.AspNetCore.FileRepository</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

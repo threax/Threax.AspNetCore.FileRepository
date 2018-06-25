@@ -28,6 +28,13 @@ namespace Threax.AspNetCore.FileRepository
 
             var path = GetPhysicalPath(fileName);
 
+            //Make sure final directory exists
+            var dir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
             using (var write = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None))
             {
                 await stream.CopyToAsync(write);

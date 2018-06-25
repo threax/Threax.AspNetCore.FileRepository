@@ -78,8 +78,8 @@ namespace Threax.AspNetCore.FileRepository
                 throw new InvalidOperationException("Filename cannot be null.");
             }
 
-            var path = Path.GetFullPath(Path.Combine(baseDir, Path.GetFileName(fileName)));
-            if (!path.StartsWith(baseDir)) //This isn't likely to fail, since we get just the file name above, but be doubly sure
+            var path = Path.GetFullPath(Path.Combine(baseDir, fileName));
+            if (!path.StartsWith(baseDir)) //This will fail if the uploader tried to navigate out of our upload folder.
             {
                 throw new InvalidOperationException($"Illegal file name {fileName}");
             }

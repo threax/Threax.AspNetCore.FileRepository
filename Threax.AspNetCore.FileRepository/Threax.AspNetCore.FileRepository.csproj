@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <Version>3.0.1</Version>
+    <Version>3.1.0-pre01</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>True</IncludeSymbols>
     <IncludeSource>True</IncludeSource>
@@ -10,8 +10,7 @@
     <PackageLicenseUrl>https://github.com/threax/Threax.AspNetCore.FileRepository/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/threax/Threax.AspNetCore.FileRepository</PackageProjectUrl>
     <RepositoryUrl>https://github.com/threax/Threax.AspNetCore.FileRepository</RepositoryUrl>
-    <PackageReleaseNotes>Version 3, do not modify incoming paths, use them as is under the upload directory. Still checks folder.
-3.0.1 Make sure final output directory exists.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added a GetFiles and GetDirectories to list files and directories in the repository.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

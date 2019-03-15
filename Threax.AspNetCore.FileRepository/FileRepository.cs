@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,11 +10,13 @@ namespace Threax.AspNetCore.FileRepository
     public class FileRepository : IFileRepository
     {
         private String baseDir;
+        private int removePathLength;
         private IFileVerifier fileVerifier;
 
         public FileRepository(String baseDir, IFileVerifier fileVerifier)
         {
             this.baseDir = Path.GetFullPath(baseDir);
+            this.removePathLength = this.baseDir.Length + 1;
             this.fileVerifier = fileVerifier;
         }
 
@@ -76,6 +79,34 @@ namespace Threax.AspNetCore.FileRepository
             {
                 File.Delete(physical);
             }
+        }
+
+        /// <summary>
+        /// Enumerate through the directories in a directory.
+        /// </summary>
+        /// <param name="path">The path to search.</param>
+        /// <param name="searchPattern">The pattern to search for.</param>
+        /// <param name="searchOption">The search options</param>
+        /// <returns></returns>
+        public IEnumerable<String> GetDirectories(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        {
+            var physical = GetPhysicalPath(path);
+            var dirs = Directory.GetDirectories(physical, searchPattern, searchOption);
+            return dirs.Select(i => i.Substring(removePathLength));
+        }
+
+        /// <summary>
+        /// Enumerate through the files in a directory.
+        /// </summary>
+        /// <param name="path">The path to search.</param>
+        /// <param name="searchPattern">The pattern to search for.</param>
+        /// <param name="searchOption">The search options</param>
+        /// <returns></returns>
+        public IEnumerable<String> GetFiles(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        {
+            var physical = GetPhysicalPath(path);
+            var files = Directory.GetFiles(physical, searchPattern, searchOption);
+            return files.Select(i => i.Substring(removePathLength));
         }
 
         private String GetPhysicalPath(string fileName)

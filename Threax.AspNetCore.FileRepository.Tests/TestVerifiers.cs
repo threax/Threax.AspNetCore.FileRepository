@@ -73,6 +73,14 @@ namespace Threax.AspNetCore.FileRepository.Tests
             TestSuccessVerifier("TestFiles/Png.png", new FileVerifier().AddPng(), FileVerifierFactory.PngMimeType);
         }
 
+        [Fact]
+        public void NotDefinedFileTypeValid()
+        {
+            var verifier = new FileVerifier().AddPng();
+            verifier.AllowUnknownFiles = true;
+            TestSuccessVerifier("TestFiles/NotDefinedFile.ndf", verifier, "application/unknown");
+        }
+
         public void TestSuccessVerifier(String file, IFileVerifier verifier, String mimeType)
         {
             using (var stream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -98,7 +106,7 @@ namespace Threax.AspNetCore.FileRepository.Tests
         [Fact]
         public void NotDefinedFileType()
         {
-            TestFailValidator("TestFiles/NotDefinedFile.ndf", new FileVerifier().AddPng(), FileVerifierFactory.PngMimeType);
+            TestFailValidator("TestFiles/NotDefinedFile.ndf", new FileVerifier().AddPng(), "application/unknown");
         }
 
         //This test is commented out because it actually allows the really evil pdf through, that file is html, but starts

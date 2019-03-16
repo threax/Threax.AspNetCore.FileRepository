@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Threax.AspNetCore.FileRepository
 {
-    public class FileRepository : IFileRepository
+    public class FileRepository<InjectT> : IFileRepository<InjectT>
     {
         private String baseDir;
         private int removePathLength;
@@ -144,11 +144,12 @@ namespace Threax.AspNetCore.FileRepository
         }
     }
 
-    public class FileRepository<InjectT> : FileRepository, IFileRepository<InjectT>
+    public class FileRepository : FileRepository<FileRepository.Handle>
     {
-        public FileRepository(string baseDir, IFileVerifier fileVerifier) 
-            : base(baseDir, fileVerifier)
+        public FileRepository(string baseDir, IFileVerifier fileVerifier) : base(baseDir, fileVerifier)
         {
         }
+
+        public class Handle { } //A unique class to be the InjectT for this type.
     }
 }

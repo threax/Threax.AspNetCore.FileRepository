@@ -9,34 +9,64 @@ namespace Microsoft.Extensions.DependencyInjection
     /// <summary>
     /// Options for the file repository.
     /// </summary>
-    public class FileRepositoryOptions
+    public class FileRepositoryOptions<InjectT>
     {
         /// <summary>
-        /// Callback function to 
+        /// Callback function to configure the IFileVerifier.
         /// </summary>
         public Action<IFileVerifier> ConfigureVerifier { get; set; }
 
-        public String OutputDir { get; set; }
+        /// <summary>
+        /// Callback to create the IFileRepository. You can use functions like UseFilesystem to configure this.
+        /// </summary>
+        public Func<IServiceProvider, IFileRepository<InjectT>> CreateFileRepository;
     }
 
     public static class FileRepositoryServiceExtensions
     {
-        /// <summary>
-        /// Add a file repository. Use ConfigureVerifier in the options to add the file types you want to support.
-        /// </summary>
-        /// <param name="services">The service colleciton to add the file verifier to.</param>
-        /// <param name="options">The options.</param>
-        /// <returns>The service collection.</returns>
-        public static IServiceCollection AddFileRepository(this IServiceCollection services, FileRepositoryOptions options)
+        public static FileRepositoryOptions<FileRepository.Handle> UseLocalFiles(this FileRepositoryOptions<FileRepository.Handle> options, Action<FileSystemOptions> config)
         {
-            if (String.IsNullOrEmpty(options.OutputDir))
+            return UseLocalFiles<FileRepository.Handle>(options, config);
+        }
+
+        public static FileRepositoryOptions<InjectT> UseLocalFiles<InjectT>(this FileRepositoryOptions<InjectT> options, Action<FileSystemOptions> config)
+        {
+            var fileSystemOptions = new FileSystemOptions();
+            config.Invoke(fileSystemOptions);
+
+            if(options.CreateFileRepository != null)
+            {
+                throw new InvalidOperationException("Only configure CreateFileRepository one time.");
+            }
+
+            if (String.IsNullOrEmpty(fileSystemOptions.RootDir))
             {
                 throw new InvalidOperationException("You must include an output directory");
             }
 
+            options.CreateFileRepository = s => new FileRepository<InjectT>(fileSystemOptions.RootDir, s.GetRequiredService<IFileVerifier>());
+            return options;
+        }
+
+        /// <summary>
+        /// Add a file repository. Use ConfigureVerifier in the options to add the file types you want to support.
+        /// </summary>
+        /// <param name="services">The service colleciton to add the file verifier to.</param>
+        /// <param name="config">The configuration callback.</param>
+        /// <returns>The service collection.</returns>
+        public static IServiceCollection AddFileRepository(this IServiceCollection services, Action<FileRepositoryOptions<FileRepository.Handle>> config)
+        {
+            var options = new FileRepositoryOptions<FileRepository.Handle>();
+            config.Invoke(options);
+
             if(options.ConfigureVerifier == null)
             {
                 throw new InvalidOperationException("You must include a function to configure your file validator.");
+            }
+
+            if(options.CreateFileRepository == null)
+            {
+                throw new InvalidOperationException("You must configure the file repository. Call UseFilesystem on your options to do this.");
             }
 
             services.AddSingleton<IFileVerifier>(s =>
@@ -45,10 +75,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.ConfigureVerifier(verifier);
                 return verifier;
             });
-            services.AddSingleton<IFileRepository>(s =>
-            {
-                return new FileRepository<IFileRepository>(options.OutputDir, s.GetRequiredService<IFileVerifier>());
-            });
+
+            services.AddSingleton<IFileRepository>(s => options.CreateFileRepository(s));
 
             return services;
         }
@@ -62,16 +90,19 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="services">The service colleciton to add the file verifier to.</param>
         /// <param name="options">The options.</param>
         /// <returns>The service collection.</returns>
-        public static IServiceCollection AddFileRepository<InjectT>(this IServiceCollection services, FileRepositoryOptions options)
+        public static IServiceCollection AddFileRepository<InjectT>(this IServiceCollection services, Action<FileRepositoryOptions<InjectT>> config)
         {
-            if (String.IsNullOrEmpty(options.OutputDir))
-            {
-                throw new Exception("You must include an output directory");
-            }
+            var options = new FileRepositoryOptions<InjectT>();
+            config.Invoke(options);
 
             if (options.ConfigureVerifier == null)
             {
                 throw new InvalidOperationException("You must include a function to configure your file validator.");
+            }
+
+            if (options.CreateFileRepository == null)
+            {
+                throw new InvalidOperationException("You must configure the file repository. Call UseFilesystem on your options to do this.");
             }
 
             services.AddSingleton<IFileVerifier<InjectT>>(s =>
@@ -81,10 +112,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 return verifier;
             });
 
-            services.AddSingleton<IFileRepository<InjectT>>(s =>
-            {
-                return new FileRepository<InjectT>(options.OutputDir, s.GetRequiredService<IFileVerifier<InjectT>>());
-            });
+            services.AddSingleton<IFileRepository<InjectT>>(s => options.CreateFileRepository(s));
 
             return services;
         }

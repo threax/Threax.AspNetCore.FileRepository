@@ -2,15 +2,17 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <Version>4.0.0-pre02</Version>
+    <Version>4.0.0</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>True</IncludeSymbols>
     <IncludeSource>True</IncludeSource>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
     <Authors>Andrew Piper</Authors>
     <PackageLicenseUrl>https://github.com/threax/Threax.AspNetCore.FileRepository/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/threax/Threax.AspNetCore.FileRepository</PackageProjectUrl>
     <RepositoryUrl>https://github.com/threax/Threax.AspNetCore.FileRepository</RepositoryUrl>
-    <PackageReleaseNotes>Major change to IFileRepository. It is now async in order to facilitate different back ends.</PackageReleaseNotes>
+    <PackageReleaseNotes>Major change to IFileRepository. It is now async in order to facilitate different back ends. Also modified how the services are registered to allow for more back ends.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

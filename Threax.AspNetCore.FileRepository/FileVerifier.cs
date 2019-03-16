@@ -14,12 +14,6 @@ namespace Threax.AspNetCore.FileRepository
             this.typeVerifiers.Add(verifier.MimeType, verifier);
         }
 
-        [Obsolete("Please use AddTypeVerifier with correct casing")]
-        public void addTypeVerifier(IFileTypeVerifier verifier)
-        {
-            this.AddTypeVerifier(verifier);
-        }
-
         public void Validate(Stream fileStream, String fileName, String mimeType)
         {
             IFileTypeVerifier verifier;

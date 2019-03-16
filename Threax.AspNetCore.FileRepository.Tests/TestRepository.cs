@@ -10,12 +10,25 @@ namespace Threax.AspNetCore.FileRepository.Tests
     public class TestRepository
     {
         [Fact]
-        public async Task OpenFile()
+        public async Task OpenRead()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
             using (var stream = await repo.OpenRead("Pdf.pdf"))
             {
                 Assert.True(stream.Length > 0, "Opened stream is empty");
+            }
+        }
+
+        [Fact]
+        public async Task SaveStream()
+        {
+            var repo = new FileRepository("TestFiles", new FileVerifier().AddDoc());
+            using (var stream = await repo.OpenRead("Doc.doc"))
+            {
+                var fileName = "TestDoc.doc";
+                await repo.Write(fileName, FileVerifierFactory.DocMimeType, stream);
+                Assert.True(await repo.FileExists(fileName));
+                await repo.DeleteFile(fileName);
             }
         }
 
@@ -88,7 +101,7 @@ namespace Threax.AspNetCore.FileRepository.Tests
         public async Task ExistsValid()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            Assert.True(await repo.Exists("Png.png"));
+            Assert.True(await repo.FileExists("Png.png"));
         }
 
         [Fact]
@@ -127,6 +140,13 @@ namespace Threax.AspNetCore.FileRepository.Tests
         }
 
         [Fact]
+        public async Task TryToBreakOutDeleteDirectory()
+        {
+            var repo = new FileRepository("TestFiles", new FileVerifier());
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.DeleteDirectory("../file.txt"));
+        }
+
+        [Fact]
         public async Task TryToBreakOutOpenRead()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
@@ -139,7 +159,7 @@ namespace Threax.AspNetCore.FileRepository.Tests
             var repo = new FileRepository("TestFiles", new FileVerifier());
             using (var stream = new MemoryStream())
             {
-                await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.OpenWrite("../file.txt", "text", stream));
+                await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.Write("../file.txt", "text", stream));
             }
         }
 
@@ -147,7 +167,7 @@ namespace Threax.AspNetCore.FileRepository.Tests
         public async Task TryToBreakOutExists()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.Exists("../file.txt"));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.FileExists("../file.txt"));
         }
 
         [Fact]

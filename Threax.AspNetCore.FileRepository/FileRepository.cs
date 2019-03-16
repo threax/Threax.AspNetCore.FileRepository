@@ -20,7 +20,7 @@ namespace Threax.AspNetCore.FileRepository
             this.fileVerifier = fileVerifier;
         }
 
-        public async Task<Stream> OpenWrite(String fileName, String mimeType, Stream stream)
+        public async Task Write(String fileName, String mimeType, Stream stream)
         {
             fileVerifier.Validate(stream, fileName, mimeType);
 
@@ -38,7 +38,10 @@ namespace Threax.AspNetCore.FileRepository
                 Directory.CreateDirectory(dir);
             }
 
-            return await Task.FromResult(File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None));
+            using(var destStream = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                await stream.CopyToAsync(destStream);
+            }
         }
 
         public async Task<Stream> OpenRead(String fileName)
@@ -58,7 +61,7 @@ namespace Threax.AspNetCore.FileRepository
             return await Task.FromResult(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read));
         }
 
-        public Task<bool> Exists(String fileName)
+        public Task<bool> FileExists(String fileName)
         {
             if (!Directory.Exists(baseDir))
             {
@@ -86,6 +89,16 @@ namespace Threax.AspNetCore.FileRepository
             if (File.Exists(physical))
             {
                 File.Delete(physical);
+            }
+            return Task.FromResult(0);
+        }
+
+        public Task DeleteDirectory(String path, bool recursive = false)
+        {
+            var physical = GetPhysicalPath(path);
+            if (Directory.Exists(physical))
+            {
+                Directory.Delete(physical, recursive);
             }
             return Task.FromResult(0);
         }

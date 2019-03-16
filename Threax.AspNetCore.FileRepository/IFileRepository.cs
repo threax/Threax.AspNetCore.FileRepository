@@ -8,21 +8,49 @@ namespace Threax.AspNetCore.FileRepository
     public interface IFileRepository
     {
         /// <summary>
-        /// Open a write stream in the repository.
+        /// Save a stream to the repository. It will be verified first.
         /// </summary>
         /// <param name="fileName">The name of the file.</param>
         /// <param name="mimeType">The mime type to verify the file with.</param>
-        /// <param name="stream">The stream.</param>
+        /// <param name="stream">The stream to write.</param>
         /// <returns></returns>
-        Task<Stream> OpenWrite(String fileName, String mimeType, Stream stream);
+        Task Write(String fileName, String mimeType, Stream stream);
 
+        /// <summary>
+        /// Open a stream to read a file.
+        /// </summary>
+        /// <param name="fileName">The name of the file to read.</param>
+        /// <returns></returns>
         Task<Stream> OpenRead(String fileName);
 
-        Task<bool> Exists(String fileName);
+        /// <summary>
+        /// Test to see if a file exists.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        Task<bool> FileExists(String fileName);
 
+        /// <summary>
+        /// Test to see if a directory exists.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         Task<bool> DirectoryExists(String path);
 
+        /// <summary>
+        /// Delete a file.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         Task DeleteFile(String fileName);
+
+        /// <summary>
+        /// Delete a directory.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="recursive"></param>
+        /// <returns></returns>
+        Task DeleteDirectory(String path, bool recursive = false);
 
         /// <summary>
         /// Enumerate through the directories in a directory.

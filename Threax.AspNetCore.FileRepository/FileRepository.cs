@@ -117,14 +117,14 @@ namespace Threax.AspNetCore.FileRepository
         public Task<IEnumerable<String>> GetDirectories(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             var physical = GetPhysicalPath(path);
-            var dirs = Directory.GetDirectories(physical, searchPattern, searchOption);
+            var dirs = Directory.EnumerateDirectories(physical, searchPattern, searchOption);
             return Task.FromResult(dirs.Select(i => i.Substring(removePathLength)));
         }
 
         public Task<IEnumerable<String>> GetFiles(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             var physical = GetPhysicalPath(path);
-            var files = Directory.GetFiles(physical, searchPattern, searchOption);
+            var files = Directory.EnumerateFiles(physical, searchPattern, searchOption);
             return Task.FromResult(files.Select(i => i.Substring(removePathLength)));
         }
 

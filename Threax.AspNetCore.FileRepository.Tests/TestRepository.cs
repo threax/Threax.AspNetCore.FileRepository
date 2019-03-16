@@ -20,15 +20,46 @@ namespace Threax.AspNetCore.FileRepository.Tests
         }
 
         [Fact]
+        public async Task OpenWriteNoValidate()
+        {
+            var writeRepoDir = "TestOpenWriteNoValidate";
+            Directory.CreateDirectory(writeRepoDir);
+            var repo = new FileRepository(writeRepoDir, new FileVerifier());
+            var fileName = "OpenWriteNoValidate.txt";
+            using (var stream = await repo.OpenWriteNoValidate(fileName))
+            {
+                Assert.True(stream.Length == 0, "Opened stream is not empty.");
+            }
+            Assert.True(await repo.FileExists(fileName));
+            await repo.DeleteFile(fileName);
+            Directory.Delete(writeRepoDir);
+        }
+
+        [Fact]
         public async Task SaveStream()
+        {
+            var writeRepoDir = "TestSaveStream";
+            var repo = new FileRepository("TestFiles", new FileVerifier().AddDoc());
+            Directory.CreateDirectory(writeRepoDir);
+            var writeRepo = new FileRepository(writeRepoDir, new FileVerifier().AddDoc());
+            using (var stream = await repo.OpenRead("Doc.doc"))
+            {
+                var fileName = "TestDoc.doc";
+                await writeRepo.WriteFile(fileName, FileVerifierFactory.DocMimeType, stream);
+                Assert.True(await writeRepo.FileExists(fileName));
+                await writeRepo.DeleteFile(fileName);
+            }
+            Directory.Delete(writeRepoDir);
+        }
+
+        [Fact]
+        public async Task Validate()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier().AddDoc());
             using (var stream = await repo.OpenRead("Doc.doc"))
             {
                 var fileName = "TestDoc.doc";
-                await repo.Write(fileName, FileVerifierFactory.DocMimeType, stream);
-                Assert.True(await repo.FileExists(fileName));
-                await repo.DeleteFile(fileName);
+                await repo.Validate(fileName, FileVerifierFactory.DocMimeType, stream);
             }
         }
 
@@ -154,12 +185,19 @@ namespace Threax.AspNetCore.FileRepository.Tests
         }
 
         [Fact]
+        public async Task TryToBreakOutOpenWriteNoValidate()
+        {
+            var repo = new FileRepository("TestFiles", new FileVerifier());
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.OpenWriteNoValidate("../file.txt"));
+        }
+
+        [Fact]
         public async Task TryToBreakOutOpenWrite()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
             using (var stream = new MemoryStream())
             {
-                await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.Write("../file.txt", "text", stream));
+                await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.WriteFile("../file.txt", "text", stream));
             }
         }
 
@@ -175,6 +213,16 @@ namespace Threax.AspNetCore.FileRepository.Tests
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
             await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.DirectoryExists("../"));
+        }
+
+        [Fact]
+        public async Task TryToBreakOutValidate()
+        {
+            var repo = new FileRepository("TestFiles", new FileVerifier());
+            using (var stream = new MemoryStream())
+            {
+                await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.Validate("../file.txt", "text", stream));
+            }
         }
     }
 }

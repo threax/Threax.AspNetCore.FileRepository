@@ -20,10 +20,24 @@ namespace Threax.AspNetCore.FileRepository
             this.fileVerifier = fileVerifier;
         }
 
-        public async Task Write(String fileName, String mimeType, Stream stream)
+        public async Task WriteFile(String fileName, String mimeType, Stream stream)
         {
-            fileVerifier.Validate(stream, fileName, mimeType);
+            await Validate(fileName, mimeType, stream);
 
+            using (var destStream = await OpenWriteNoValidate(fileName))
+            {
+                await stream.CopyToAsync(destStream);
+            }
+        }
+
+        public Task Validate(string fileName, string mimeType, Stream stream)
+        {
+            fileVerifier.Validate(stream, GetPhysicalPath(fileName), mimeType);
+            return Task.FromResult(0);
+        }
+
+        public async Task<Stream> OpenWriteNoValidate(string fileName)
+        {
             if (!Directory.Exists(baseDir))
             {
                 throw new InvalidOperationException("File repository directory does not exist.");
@@ -38,10 +52,7 @@ namespace Threax.AspNetCore.FileRepository
                 Directory.CreateDirectory(dir);
             }
 
-            using(var destStream = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                await stream.CopyToAsync(destStream);
-            }
+            return await Task.FromResult(File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None));
         }
 
         public async Task<Stream> OpenRead(String fileName)
@@ -103,13 +114,6 @@ namespace Threax.AspNetCore.FileRepository
             return Task.FromResult(0);
         }
 
-        /// <summary>
-        /// Enumerate through the directories in a directory.
-        /// </summary>
-        /// <param name="path">The path to search.</param>
-        /// <param name="searchPattern">The pattern to search for.</param>
-        /// <param name="searchOption">The search options</param>
-        /// <returns></returns>
         public Task<IEnumerable<String>> GetDirectories(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             var physical = GetPhysicalPath(path);
@@ -117,13 +121,6 @@ namespace Threax.AspNetCore.FileRepository
             return Task.FromResult(dirs.Select(i => i.Substring(removePathLength)));
         }
 
-        /// <summary>
-        /// Enumerate through the files in a directory.
-        /// </summary>
-        /// <param name="path">The path to search.</param>
-        /// <param name="searchPattern">The pattern to search for.</param>
-        /// <param name="searchOption">The search options</param>
-        /// <returns></returns>
         public Task<IEnumerable<String>> GetFiles(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             var physical = GetPhysicalPath(path);

@@ -8,16 +8,36 @@ namespace Threax.AspNetCore.FileRepository
     public interface IFileRepository
     {
         /// <summary>
-        /// Save a stream to the repository. It will be verified first.
+        /// Save a stream to the repository. It will be validated first. This is the preferred way to write streams
+        /// unless you need more control, then see Validate and OpenWriteNoValidate.
         /// </summary>
         /// <param name="fileName">The name of the file.</param>
         /// <param name="mimeType">The mime type to verify the file with.</param>
         /// <param name="stream">The stream to write.</param>
         /// <returns></returns>
-        Task Write(String fileName, String mimeType, Stream stream);
+        Task WriteFile(String fileName, String mimeType, Stream stream);
 
         /// <summary>
-        /// Open a stream to read a file.
+        /// Validate that the stream is valid. Will throw an exception if there is a problem.
+        /// </summary>
+        /// <param name="fileName">The name of the file.</param>
+        /// <param name="mimeType">The mime type to verify the file with.</param>
+        /// <param name="stream">The stream to validate.</param>
+        /// <returns></returns>
+        Task Validate(string fileName, string mimeType, Stream stream);
+
+        /// <summary>
+        /// Open a write stream, if the file exists it will be overwritten, this will not validate the stream first. This can be used if you need
+        /// more control over the stream, but be careful since none of the validation you setup will be executed.
+        /// Ideally use WriteFile so the validation will run or call Validate before opening this stream. If you trust
+        /// the source you can also just open this stream and write. The caller must dispose the returned stream.
+        /// </summary>
+        /// <param name="fileName">The name of the file.</param>
+        /// <returns></returns>
+        Task<Stream> OpenWriteNoValidate(string fileName);
+
+        /// <summary>
+        /// Open a stream to read a file. The caller must dispose the returned stream.
         /// </summary>
         /// <param name="fileName">The name of the file to read.</param>
         /// <returns></returns>

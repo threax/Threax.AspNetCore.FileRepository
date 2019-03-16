@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IFileVerifier AddPdf(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".pdf", PdfMimeType, 0x25, 0x50, 0x44, 0x46));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(".pdf", PdfMimeType, 0x25, 0x50, 0x44, 0x46));
             return fileVerifier;
         }
 
@@ -22,7 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IFileVerifier AddDocx(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".docx", DocxMimeType, 0x50, 0x4B, 0x03, 0x04));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(".docx", DocxMimeType, 0x50, 0x4B, 0x03, 0x04));
             return fileVerifier;
         }
 
@@ -30,7 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IFileVerifier AddXlsx(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".xlsx", XlsxMimeType, 0x50, 0x4B, 0x03, 0x04));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(".xlsx", XlsxMimeType, 0x50, 0x4B, 0x03, 0x04));
             return fileVerifier;
         }
 
@@ -38,7 +38,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IFileVerifier AddPptx(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".pptx", PptxMimeType, 0x50, 0x4B, 0x03, 0x04));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(".pptx", PptxMimeType, 0x50, 0x4B, 0x03, 0x04));
             return fileVerifier;
         }
 
@@ -46,7 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IFileVerifier AddDoc(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".doc", DocMimeType, 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(".doc", DocMimeType, 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1));
             return fileVerifier;
         }
 
@@ -54,7 +54,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IFileVerifier AddXls(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".xls", XlsMimeType, 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(".xls", XlsMimeType, 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1));
             return fileVerifier;
         }
 
@@ -62,7 +62,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static IFileVerifier AddPpt(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".ppt", PptMimeType, 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(".ppt", PptMimeType, 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1));
             return fileVerifier;
         }
 
@@ -74,49 +74,49 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns>The passed in file verifier.</returns>
         public static IFileVerifier AddHtml(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(new List<String> { ".html", ".htm" }, HtmlMimeType));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(new List<String> { ".html", ".htm" }, HtmlMimeType));
             return fileVerifier;
         }
         public static readonly String HtmlMimeType = "text/html";
 
         public static IFileVerifier AddBitmap(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".bmp", BitmapMimeType));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(".bmp", BitmapMimeType));
             return fileVerifier;
         }
         public static readonly String BitmapMimeType = "image/bmp";
 
         public static IFileVerifier AddGif(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".gif", GifMimeType));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(".gif", GifMimeType));
             return fileVerifier;
         }
         public static readonly String GifMimeType = "image/gif";
 
         public static IFileVerifier AddJpeg(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(new List<String> { ".jpg", ".jpeg", ".jpe", ".jfif" }, JpegMimeType));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(new List<String> { ".jpg", ".jpeg", ".jpe", ".jfif" }, JpegMimeType));
             return fileVerifier;
         }
         public static readonly String JpegMimeType = "image/jpeg";
 
         public static IFileVerifier AddPng(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".png", PngMimeType));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(".png", PngMimeType));
             return fileVerifier;
         }
         public static readonly String PngMimeType = "image/png";
 
         public static IFileVerifier AddSvgXml(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".svg", SvgXmlMimeType));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(".svg", SvgXmlMimeType));
             return fileVerifier;
         }
         public static readonly String SvgXmlMimeType = "image/svg+xml";
 
         public static IFileVerifier AddJson(this IFileVerifier fileVerifier)
         {
-            fileVerifier.addTypeVerifier(new MagicNumberVerifier(".json", JsonMimeType));
+            fileVerifier.AddTypeVerifier(new MagicNumberVerifier(".json", JsonMimeType));
             return fileVerifier;
         }
         public static readonly String JsonMimeType = "application/json";

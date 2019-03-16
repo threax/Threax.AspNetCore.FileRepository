@@ -9,9 +9,15 @@ namespace Threax.AspNetCore.FileRepository
     {
         private Dictionary<String, IFileTypeVerifier> typeVerifiers = new Dictionary<string, IFileTypeVerifier>();
 
-        public void addTypeVerifier(IFileTypeVerifier verifier)
+        public void AddTypeVerifier(IFileTypeVerifier verifier)
         {
             this.typeVerifiers.Add(verifier.MimeType, verifier);
+        }
+
+        [Obsolete("Please use AddTypeVerifier with correct casing")]
+        public void addTypeVerifier(IFileTypeVerifier verifier)
+        {
+            this.AddTypeVerifier(verifier);
         }
 
         public void Validate(Stream fileStream, String fileName, String mimeType)

@@ -72,6 +72,17 @@ namespace Threax.AspNetCore.FileRepository
             return File.Exists(physical);
         }
 
+        public bool DirectoryExists(String path)
+        {
+            if (!Directory.Exists(baseDir))
+            {
+                return false;
+            }
+
+            var physical = GetPhysicalPath(path);
+            return Directory.Exists(physical);
+        }
+
         public void DeleteFile(String fileName)
         {
             var physical = GetPhysicalPath(fileName);

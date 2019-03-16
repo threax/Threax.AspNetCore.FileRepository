@@ -95,6 +95,12 @@ namespace Threax.AspNetCore.FileRepository.Tests
             TestFailValidator("TestFiles/PhpTest.php.doc", new FileVerifier().AddDoc(), FileVerifierFactory.DocMimeType);
         }
 
+        [Fact]
+        public void NotDefinedFileType()
+        {
+            TestFailValidator("TestFiles/NotDefinedFile.ndf", new FileVerifier().AddPng(), FileVerifierFactory.PngMimeType);
+        }
+
         //This test is commented out because it actually allows the really evil pdf through, that file is html, but starts
         //with %PDF like a real pdf, all browsers refuse to open this file at the time of this writing (8-6-17), so that file
         //is considered safe.

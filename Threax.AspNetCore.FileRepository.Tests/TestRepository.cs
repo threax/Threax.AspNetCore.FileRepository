@@ -25,7 +25,7 @@ namespace Threax.AspNetCore.FileRepository.Tests
             var repo = new FileRepository("TestFiles", new FileVerifier());
             var files = repo.GetFiles("");
             Assert.NotEmpty(files);
-            Assert.Equal(14, files.Count());
+            Assert.Equal(15, files.Count());
             foreach (var file in files)
             {
                 Assert.DoesNotContain(Path.GetFullPath("TestFiles"), file);
@@ -51,7 +51,7 @@ namespace Threax.AspNetCore.FileRepository.Tests
             var repo = new FileRepository("TestFiles", new FileVerifier());
             var files = repo.GetFiles("", searchOption: SearchOption.AllDirectories);
             Assert.NotEmpty(files);
-            Assert.Equal(15, files.Count());
+            Assert.Equal(16, files.Count());
             foreach(var file in files)
             {
                 Assert.DoesNotContain(Path.GetFullPath("TestFiles"), file);
@@ -85,13 +85,32 @@ namespace Threax.AspNetCore.FileRepository.Tests
         }
 
         [Fact]
+        public void ExistsValid()
+        {
+            var repo = new FileRepository("TestFiles", new FileVerifier());
+            Assert.True(repo.Exists("Png.png"));
+        }
+
+        [Fact]
+        public void DirectoryExistsValid()
+        {
+            var repo = new FileRepository("TestFiles", new FileVerifier());
+            Assert.True(repo.DirectoryExists("TestFolder"));
+        }
+
+        [Fact]
+        public void DirectoryExistsFalse()
+        {
+            var repo = new FileRepository("TestFiles", new FileVerifier());
+            Assert.False(repo.DirectoryExists("Png.png"));
+        }
+
+        [Fact]
         public void TryToBreakOutGetFiles()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
             Assert.Throws<InvalidOperationException>(() => repo.GetFiles("../"));
         }
-
-
 
         [Fact]
         public void TryToBreakOutGetDirectories()
@@ -100,8 +119,6 @@ namespace Threax.AspNetCore.FileRepository.Tests
             Assert.Throws<InvalidOperationException>(() => repo.GetDirectories("../"));
         }
 
-
-
         [Fact]
         public void TryToBreakOutDeleteFile()
         {
@@ -109,16 +126,12 @@ namespace Threax.AspNetCore.FileRepository.Tests
             Assert.Throws<InvalidOperationException>(() => repo.DeleteFile("../file.txt"));
         }
 
-
-
         [Fact]
         public void TryToBreakOutOpen()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
             Assert.Throws<InvalidOperationException>(() => repo.OpenFile("../file.txt"));
         }
-
-
 
         [Fact]
         public async Task TryToBreakOutSave()
@@ -128,6 +141,20 @@ namespace Threax.AspNetCore.FileRepository.Tests
             {
                 await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.SaveFile("../file.txt", "text", stream));
             }
+        }
+
+        [Fact]
+        public void TryToBreakOutExists()
+        {
+            var repo = new FileRepository("TestFiles", new FileVerifier());
+            Assert.Throws<InvalidOperationException>(() => repo.Exists("../file.txt"));
+        }
+
+        [Fact]
+        public void TryToBreakOutDirectoryExists()
+        {
+            var repo = new FileRepository("TestFiles", new FileVerifier());
+            Assert.Throws<InvalidOperationException>(() => repo.DirectoryExists("../"));
         }
     }
 }

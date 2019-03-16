@@ -7,11 +7,22 @@ namespace Threax.AspNetCore.FileRepository
 {
     public interface IFileRepository
     {
-        void DeleteFile(string fileName);
-        bool Exists(string fileName);
-        bool DirectoryExists(String path);
-        Task SaveFile(string fileName, string mimeType, Stream stream);
-        Stream OpenFile(string fileName);
+        /// <summary>
+        /// Open a write stream in the repository.
+        /// </summary>
+        /// <param name="fileName">The name of the file.</param>
+        /// <param name="mimeType">The mime type to verify the file with.</param>
+        /// <param name="stream">The stream.</param>
+        /// <returns></returns>
+        Task<Stream> OpenWrite(String fileName, String mimeType, Stream stream);
+
+        Task<Stream> OpenRead(String fileName);
+
+        Task<bool> Exists(String fileName);
+
+        Task<bool> DirectoryExists(String path);
+
+        Task DeleteFile(String fileName);
 
         /// <summary>
         /// Enumerate through the directories in a directory.
@@ -20,7 +31,7 @@ namespace Threax.AspNetCore.FileRepository
         /// <param name="searchPattern">The pattern to search for.</param>
         /// <param name="searchOption">The search options</param>
         /// <returns></returns>
-        IEnumerable<String> GetDirectories(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly);
+        Task<IEnumerable<String>> GetDirectories(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly);
 
         /// <summary>
         /// Enumerate through the files in a directory.
@@ -29,7 +40,7 @@ namespace Threax.AspNetCore.FileRepository
         /// <param name="searchPattern">The pattern to search for.</param>
         /// <param name="searchOption">The search options</param>
         /// <returns></returns>
-        IEnumerable<String> GetFiles(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly);
+        Task<IEnumerable<String>> GetFiles(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly);
     }
 
     public interface IFileRepository<InjectT> : IFileRepository

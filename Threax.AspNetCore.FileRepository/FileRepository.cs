@@ -20,7 +20,7 @@ namespace Threax.AspNetCore.FileRepository
             this.fileVerifier = fileVerifier;
         }
 
-        public async Task SaveFile(String fileName, String mimeType, Stream stream)
+        public async Task<Stream> OpenWrite(String fileName, String mimeType, Stream stream)
         {
             fileVerifier.Validate(stream, fileName, mimeType);
 
@@ -38,13 +38,10 @@ namespace Threax.AspNetCore.FileRepository
                 Directory.CreateDirectory(dir);
             }
 
-            using (var write = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                await stream.CopyToAsync(write);
-            }
+            return await Task.FromResult(File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None));
         }
 
-        public Stream OpenFile(String fileName)
+        public async Task<Stream> OpenRead(String fileName)
         {
             if (!Directory.Exists(baseDir))
             {
@@ -58,38 +55,39 @@ namespace Threax.AspNetCore.FileRepository
                 throw new FileNotFoundException("Cannot find file", fileName);
             }
 
-            return File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return await Task.FromResult(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.Read));
         }
 
-        public bool Exists(String fileName)
+        public Task<bool> Exists(String fileName)
         {
             if (!Directory.Exists(baseDir))
             {
-                return false;
+                return Task.FromResult(false);
             }
 
             var physical = GetPhysicalPath(fileName);
-            return File.Exists(physical);
+            return Task.FromResult(File.Exists(physical));
         }
 
-        public bool DirectoryExists(String path)
+        public Task<bool> DirectoryExists(String path)
         {
             if (!Directory.Exists(baseDir))
             {
-                return false;
+                return Task.FromResult(false);
             }
 
             var physical = GetPhysicalPath(path);
-            return Directory.Exists(physical);
+            return Task.FromResult(Directory.Exists(physical));
         }
 
-        public void DeleteFile(String fileName)
+        public Task DeleteFile(String fileName)
         {
             var physical = GetPhysicalPath(fileName);
             if (File.Exists(physical))
             {
                 File.Delete(physical);
             }
+            return Task.FromResult(0);
         }
 
         /// <summary>
@@ -99,11 +97,11 @@ namespace Threax.AspNetCore.FileRepository
         /// <param name="searchPattern">The pattern to search for.</param>
         /// <param name="searchOption">The search options</param>
         /// <returns></returns>
-        public IEnumerable<String> GetDirectories(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        public Task<IEnumerable<String>> GetDirectories(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             var physical = GetPhysicalPath(path);
             var dirs = Directory.GetDirectories(physical, searchPattern, searchOption);
-            return dirs.Select(i => i.Substring(removePathLength));
+            return Task.FromResult(dirs.Select(i => i.Substring(removePathLength)));
         }
 
         /// <summary>
@@ -113,11 +111,11 @@ namespace Threax.AspNetCore.FileRepository
         /// <param name="searchPattern">The pattern to search for.</param>
         /// <param name="searchOption">The search options</param>
         /// <returns></returns>
-        public IEnumerable<String> GetFiles(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
+        public Task<IEnumerable<String>> GetFiles(String path, String searchPattern = "*", SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             var physical = GetPhysicalPath(path);
             var files = Directory.GetFiles(physical, searchPattern, searchOption);
-            return files.Select(i => i.Substring(removePathLength));
+            return Task.FromResult(files.Select(i => i.Substring(removePathLength)));
         }
 
         private String GetPhysicalPath(string fileName)

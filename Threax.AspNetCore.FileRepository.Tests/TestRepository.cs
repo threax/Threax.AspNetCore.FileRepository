@@ -10,20 +10,20 @@ namespace Threax.AspNetCore.FileRepository.Tests
     public class TestRepository
     {
         [Fact]
-        public void OpenFile()
+        public async Task OpenFile()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            using (var stream = repo.OpenFile("Pdf.pdf"))
+            using (var stream = await repo.OpenRead("Pdf.pdf"))
             {
                 Assert.True(stream.Length > 0, "Opened stream is empty");
             }
         }
 
         [Fact]
-        public void GetFilesValid()
+        public async Task GetFilesValid()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            var files = repo.GetFiles("");
+            var files = await repo.GetFiles("");
             Assert.NotEmpty(files);
             Assert.Equal(15, files.Count());
             foreach (var file in files)
@@ -33,10 +33,10 @@ namespace Threax.AspNetCore.FileRepository.Tests
         }
 
         [Fact]
-        public void GetGifFilesValid()
+        public async Task GetGifFilesValid()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            var files = repo.GetFiles("", "*.gif");
+            var files = await repo.GetFiles("", "*.gif");
             Assert.NotEmpty(files);
             Assert.Equal(1, files.Count());
             foreach (var file in files)
@@ -46,10 +46,10 @@ namespace Threax.AspNetCore.FileRepository.Tests
         }
 
         [Fact]
-        public void GetFilesRecursiveValid()
+        public async Task GetFilesRecursiveValid()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            var files = repo.GetFiles("", searchOption: SearchOption.AllDirectories);
+            var files = await repo.GetFiles("", searchOption: SearchOption.AllDirectories);
             Assert.NotEmpty(files);
             Assert.Equal(16, files.Count());
             foreach(var file in files)
@@ -59,10 +59,10 @@ namespace Threax.AspNetCore.FileRepository.Tests
         }
 
         [Fact]
-        public void GetDirectoriesValid()
+        public async Task GetDirectoriesValid()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            var files = repo.GetDirectories("");
+            var files = await repo.GetDirectories("");
             Assert.NotEmpty(files);
             Assert.Equal(1, files.Count());
             foreach (var file in files)
@@ -72,10 +72,10 @@ namespace Threax.AspNetCore.FileRepository.Tests
         }
 
         [Fact]
-        public void GetDirectoriesRecursiveValid()
+        public async Task GetDirectoriesRecursiveValid()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            var files = repo.GetDirectories("", searchOption: SearchOption.AllDirectories);
+            var files = await repo.GetDirectories("", searchOption: SearchOption.AllDirectories);
             Assert.NotEmpty(files);
             Assert.Equal(1, files.Count());
             foreach (var file in files)
@@ -85,76 +85,76 @@ namespace Threax.AspNetCore.FileRepository.Tests
         }
 
         [Fact]
-        public void ExistsValid()
+        public async Task ExistsValid()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            Assert.True(repo.Exists("Png.png"));
+            Assert.True(await repo.Exists("Png.png"));
         }
 
         [Fact]
-        public void DirectoryExistsValid()
+        public async Task DirectoryExistsValid()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            Assert.True(repo.DirectoryExists("TestFolder"));
+            Assert.True(await repo.DirectoryExists("TestFolder"));
         }
 
         [Fact]
-        public void DirectoryExistsFalse()
+        public async Task DirectoryExistsFalse()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            Assert.False(repo.DirectoryExists("Png.png"));
+            Assert.False(await repo.DirectoryExists("Png.png"));
         }
 
         [Fact]
-        public void TryToBreakOutGetFiles()
+        public async Task TryToBreakOutGetFiles()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            Assert.Throws<InvalidOperationException>(() => repo.GetFiles("../"));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.GetFiles("../"));
         }
 
         [Fact]
-        public void TryToBreakOutGetDirectories()
+        public async Task TryToBreakOutGetDirectories()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            Assert.Throws<InvalidOperationException>(() => repo.GetDirectories("../"));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.GetDirectories("../"));
         }
 
         [Fact]
-        public void TryToBreakOutDeleteFile()
+        public async Task TryToBreakOutDeleteFile()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            Assert.Throws<InvalidOperationException>(() => repo.DeleteFile("../file.txt"));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.DeleteFile("../file.txt"));
         }
 
         [Fact]
-        public void TryToBreakOutOpen()
+        public async Task TryToBreakOutOpenRead()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            Assert.Throws<InvalidOperationException>(() => repo.OpenFile("../file.txt"));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.OpenRead("../file.txt"));
         }
 
         [Fact]
-        public async Task TryToBreakOutSave()
+        public async Task TryToBreakOutOpenWrite()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
             using (var stream = new MemoryStream())
             {
-                await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.SaveFile("../file.txt", "text", stream));
+                await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.OpenWrite("../file.txt", "text", stream));
             }
         }
 
         [Fact]
-        public void TryToBreakOutExists()
+        public async Task TryToBreakOutExists()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            Assert.Throws<InvalidOperationException>(() => repo.Exists("../file.txt"));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.Exists("../file.txt"));
         }
 
         [Fact]
-        public void TryToBreakOutDirectoryExists()
+        public async Task TryToBreakOutDirectoryExists()
         {
             var repo = new FileRepository("TestFiles", new FileVerifier());
-            Assert.Throws<InvalidOperationException>(() => repo.DirectoryExists("../"));
+            await Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.DirectoryExists("../"));
         }
     }
 }
